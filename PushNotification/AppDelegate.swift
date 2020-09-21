@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import OneSignal
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,9 +15,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+
+
+        let onesignalInitSettings = [kOSSettingsKeyAutoPrompt: false, kOSSettingsKeyInAppLaunchURL: false]
+
+        OneSignal.initWithLaunchOptions(launchOptions, appId: "71354680-7a57-404d-8ae3-3c4200b5842c", handleNotificationAction: { (result) in
+
+                    let payload = result?.notification.payload
+                    if let additionalData = payload?.additionalData {
+
+                        let destination = additionalData["destination"] as? String ?? ""
+                       // print("the destination is: \(destination)")
+                        print(additionalData)
+                        
+                        UserDefaults.standard.set(destination, forKey: "testKey")
+                        //
+                        
+                    }
+
+
+                },settings: onesignalInitSettings)
+
         return true
     }
+
+    private func application(application: UIApplication,  didReceiveRemoteNotification userInfo: [NSObject : AnyObject],  fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+
+            print("Recived: \(userInfo)")
+
+//            switch application.applicationState {
+//            case .active:
+//    //            print("Application is open, do not override")
+//                break
+//            case .inactive, .background:
+//
+//                let payload: NSDictionary = userInfo as NSDictionary
+//
+//                if let variable = payload["variable"] as? String {
+//                   // UserDataStatistics.openedPushId = variable
+//                    print("variable")
+//                }
+//
+//            default:
+//                print("unrecognized application state")
+//            }
+
+    //        completionHandler(.newData)
+
+        }
 
     // MARK: UISceneSession Lifecycle
 
